@@ -19,3 +19,9 @@ Thumbs.db
 
 # test coverage
 coverage/
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# Vercel
+.vercel/
