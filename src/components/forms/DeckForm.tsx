@@ -39,7 +39,6 @@ export default function DeckForm({ onSubmit }: Props) {
     handleSubmit,
     watch,
     control,
-    formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { joistSpacingIn: 16, doublePerimeterBeam: false, decking: 'perpendicular' },
