@@ -35,7 +35,6 @@ export default function ShedFloorForm({ onSubmit }: Props) {
     handleSubmit,
     watch,
     control,
-    formState: { errors: _errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { joistSpacingIn: 16, useRimJoists: true },
