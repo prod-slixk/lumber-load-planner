@@ -1,5 +1,5 @@
 /**
- * UnitModeToggle — three-button segmented control for switching dimension units.
+ * UnitModeToggle — segmented control for switching dimension units.
  * Reads/writes `unitMode` in the Zustand store.
  */
 
@@ -14,14 +14,19 @@ export function UnitModeToggle() {
   const setUnitMode = useLLPStore((s) => s.setUnitMode)
 
   return (
-    <fieldset>
+    <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
       <legend className="sr-only">Dimension units</legend>
       <div
-        className="inline-flex rounded-md border border-gray-300 overflow-hidden"
         role="group"
         aria-label="Dimension units"
+        style={{
+          display: 'inline-flex',
+          border: '1.5px solid var(--llp-border)',
+          borderRadius: 'var(--llp-r-sm)',
+          overflow: 'hidden',
+        }}
       >
-        {MODES.map((mode) => {
+        {MODES.map((mode, i) => {
           const active = mode === unitMode
           return (
             <button
@@ -29,12 +34,19 @@ export function UnitModeToggle() {
               type="button"
               onClick={() => setUnitMode(mode)}
               aria-pressed={active}
-              className={[
-                'px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-inset',
-                active
-                  ? 'bg-amber-500 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-50',
-              ].join(' ')}
+              style={{
+                padding: '0.3rem 0.7rem',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
+                border: 'none',
+                borderLeft: i > 0 ? '1.5px solid var(--llp-border)' : 'none',
+                background: active ? 'var(--llp-blue)' : '#fff',
+                color: active ? '#fff' : 'var(--llp-text-muted)',
+                transition: 'background var(--llp-t-sm) var(--llp-ease), color var(--llp-t-sm) var(--llp-ease)',
+                minWidth: 52,
+              }}
             >
               {UNIT_MODE_LABELS[mode]}
             </button>

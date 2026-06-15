@@ -7,43 +7,64 @@ import Results from './pages/Results'
 import SavedProjects from './pages/SavedProjects'
 import LumberGuide from './pages/LumberGuide'
 
+// ── Lumber board SVG icon ──────────────────────────────────────────
+function LumberIcon() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      style={{ display: 'block', flexShrink: 0 }}
+    >
+      <rect x="2" y="8" width="20" height="8" rx="2" fill="rgba(255,255,255,0.90)" />
+      <rect x="2" y="8" width="20" height="8" rx="2" stroke="rgba(255,255,255,0.40)" strokeWidth="1" />
+      <line x1="7"  y1="8" x2="7"  y2="16" stroke="rgba(0,73,144,0.35)" strokeWidth="0.8" />
+      <line x1="12" y1="8" x2="12" y2="16" stroke="rgba(0,73,144,0.35)" strokeWidth="0.8" />
+      <line x1="17" y1="8" x2="17" y2="16" stroke="rgba(0,73,144,0.35)" strokeWidth="0.8" />
+    </svg>
+  )
+}
+
 function Nav() {
   const { pathname } = useLocation()
   // Hide nav on configure/results — those pages have their own back buttons
   if (pathname === '/configure' || pathname === '/results') return null
 
-  const linkStyle = (active: boolean): React.CSSProperties => ({
-    padding: '0.4rem 0.85rem',
-    borderRadius: 6,
-    fontSize: '0.875rem',
-    fontWeight: 600,
-    textDecoration: 'none',
-    color: active ? '#2563eb' : '#555',
-    background: active ? '#eff6ff' : 'transparent',
-    transition: 'all 0.12s',
-  })
-
   return (
-    <nav
-      aria-label="Main navigation"
-      style={{
-        borderBottom: '1px solid #e5e7eb',
-        padding: '0.6rem 1rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: '#fff',
-      }}
-    >
-      <NavLink to="/" style={{ textDecoration: 'none' }}>
-        <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#1a1a1a', letterSpacing: '-0.01em' }}>
-          🪵 Lumber Load Planner
-        </span>
+    <nav aria-label="Main navigation" className="llp-nav">
+      <NavLink to="/" className="llp-nav-logo">
+        <LumberIcon />
+        Lumber Load Planner
       </NavLink>
-      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-        <NavLink to="/" end style={({ isActive }) => linkStyle(isActive)}>Projects</NavLink>
-        <NavLink to="/saved" style={({ isActive }) => linkStyle(isActive)}>Saved</NavLink>
-        <NavLink to="/guide" style={({ isActive }) => linkStyle(isActive)}>Size Guide</NavLink>
+
+      <div className="llp-nav-links">
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) =>
+            `llp-nav-link${isActive ? ' llp-nav-link-active' : ''}`
+          }
+        >
+          Projects
+        </NavLink>
+        <NavLink
+          to="/saved"
+          className={({ isActive }) =>
+            `llp-nav-link${isActive ? ' llp-nav-link-active' : ''}`
+          }
+        >
+          Saved
+        </NavLink>
+        <NavLink
+          to="/guide"
+          className={({ isActive }) =>
+            `llp-nav-link${isActive ? ' llp-nav-link-active' : ''}`
+          }
+        >
+          Size Guide
+        </NavLink>
         <AuthPanel />
       </div>
     </nav>
@@ -55,13 +76,13 @@ export default function App() {
     <AuthProvider>
       <Nav />
       <Routes>
-        <Route path="/" element={<ProjectSelector />} />
+        <Route path="/"        element={<ProjectSelector />} />
         <Route path="/configure" element={<Configure />} />
-        <Route path="/results" element={<Results />} />
-        <Route path="/saved" element={<SavedProjects />} />
-        <Route path="/guide" element={<LumberGuide />} />
+        <Route path="/results"   element={<Results />} />
+        <Route path="/saved"     element={<SavedProjects />} />
+        <Route path="/guide"     element={<LumberGuide />} />
         {/* Catch-all: redirect unknown paths home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*"        element={<Navigate to="/" replace />} />
       </Routes>
     </AuthProvider>
   )

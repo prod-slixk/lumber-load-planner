@@ -45,8 +45,9 @@ function DeleteDialog({ projectName, isCloud, onConfirm, onCancel }: DeleteDialo
     <div
       role="presentation"
       style={{
-        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100,
+        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200,
+        animation: 'llp-fadeIn 150ms ease both',
       }}
       onClick={onCancel}
     >
@@ -55,15 +56,19 @@ function DeleteDialog({ projectName, isCloud, onConfirm, onCancel }: DeleteDialo
         aria-modal="true"
         aria-labelledby={headingId}
         style={{
-          background: '#fff', borderRadius: 12, padding: '1.5rem', width: '100%', maxWidth: 360,
-          boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+          background: '#fff',
+          borderRadius: 'var(--llp-r-lg)',
+          padding: '1.5rem',
+          width: '100%',
+          maxWidth: 380,
+          boxShadow: 'var(--llp-shadow-lg)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id={headingId} style={{ margin: '0 0 0.5rem', fontSize: '1.05rem' }}>
+        <h2 id={headingId} style={{ margin: '0 0 0.5rem', fontSize: '1.05rem', fontWeight: 700, color: 'var(--llp-text)' }}>
           Delete &ldquo;{projectName}&rdquo;?
         </h2>
-        <p style={{ color: '#666', fontSize: '0.9rem', margin: '0 0 1.2rem' }}>
+        <p style={{ color: 'var(--llp-text-muted)', fontSize: '0.9rem', margin: '0 0 1.25rem' }}>
           {isCloud
             ? 'This will remove it from your account on all devices.'
             : "This can't be undone. The project will be removed from this device."}
@@ -73,8 +78,17 @@ function DeleteDialog({ projectName, isCloud, onConfirm, onCancel }: DeleteDialo
             ref={confirmBtnRef}
             onClick={onConfirm}
             style={{
-              flex: 1, padding: '0.65rem', borderRadius: 8, border: 'none',
-              background: '#dc2626', color: '#fff', fontWeight: 700, cursor: 'pointer',
+              flex: 1,
+              padding: '0.65rem',
+              borderRadius: 'var(--llp-r-sm)',
+              border: 'none',
+              background: 'var(--llp-red)',
+              color: '#fff',
+              fontWeight: 700,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              fontSize: '0.9rem',
+              transition: 'background var(--llp-t-sm) var(--llp-ease)',
             }}
           >
             Delete
@@ -82,9 +96,16 @@ function DeleteDialog({ projectName, isCloud, onConfirm, onCancel }: DeleteDialo
           <button
             onClick={onCancel}
             style={{
-              flex: 1, padding: '0.65rem', borderRadius: 8,
-              border: '1.5px solid #d1d5db', background: '#fff',
-              color: '#555', fontWeight: 600, cursor: 'pointer',
+              flex: 1,
+              padding: '0.65rem',
+              borderRadius: 'var(--llp-r-sm)',
+              border: '1.5px solid var(--llp-border)',
+              background: '#fff',
+              color: 'var(--llp-text-muted)',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              fontSize: '0.9rem',
             }}
           >
             Cancel
@@ -163,48 +184,120 @@ export default function SavedProjects() {
     }
   }
 
-  // ─────────────────────────────────────────────────────────────────────────────
+  // ── Loading state ──────────────────────────────────────────────────────────
 
   if (loading) {
     return (
-      <main style={{ maxWidth: 580, margin: '0 auto', padding: '4rem 1rem', textAlign: 'center', color: '#888' }}>
-        <p>Loading projects…</p>
+      <main
+        style={{
+          maxWidth: 620,
+          margin: '0 auto',
+          padding: '5rem 1.25rem',
+          textAlign: 'center',
+          color: 'var(--llp-text-muted)',
+        }}
+      >
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            border: '3px solid var(--llp-blue-light)',
+            borderTopColor: 'var(--llp-blue)',
+            borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite',
+            margin: '0 auto 1rem',
+          }}
+          aria-hidden="true"
+        />
+        <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+        <p style={{ margin: 0, fontSize: '0.95rem' }}>Loading projects…</p>
       </main>
     )
   }
 
+  // ── Empty state ────────────────────────────────────────────────────────────
+
   if (projects.length === 0) {
     return (
-      <main style={{ maxWidth: 580, margin: '0 auto', padding: '4rem 1rem', textAlign: 'center' }}>
-        <div style={{ fontSize: '3rem', marginBottom: '1rem' }} aria-hidden="true">📋</div>
-        <h1 style={{ margin: '0 0 0.5rem', fontSize: '1.4rem', fontWeight: 700 }}>No saved projects yet</h1>
-        <p style={{ color: '#666', marginBottom: '1.5rem' }}>
-          Run a calculation and hit &quot;Save project&quot; to build your library.
+      <main
+        style={{
+          maxWidth: 620,
+          margin: '0 auto',
+          padding: '5rem 1.25rem',
+          textAlign: 'center',
+        }}
+        className="llp-page-enter"
+      >
+        <div
+          style={{
+            width: 72,
+            height: 72,
+            borderRadius: '50%',
+            background: 'var(--llp-blue-light)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 1.25rem',
+          }}
+          aria-hidden="true"
+        >
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="8" width="24" height="20" rx="2" stroke="var(--llp-blue)" strokeWidth="2"/>
+            <path d="M10 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" stroke="var(--llp-blue)" strokeWidth="2"/>
+            <path d="M10 16h12M10 21h8" stroke="var(--llp-blue)" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <h1 style={{ margin: '0 0 0.5rem', fontSize: '1.4rem', fontWeight: 800, color: 'var(--llp-text)' }}>
+          No saved projects yet
+        </h1>
+        <p style={{ color: 'var(--llp-text-muted)', marginBottom: '2rem', maxWidth: 320, margin: '0 auto 2rem' }}>
+          Run a calculation and hit &ldquo;Save project&rdquo; to build your library.
         </p>
         <button
           onClick={() => navigate('/')}
           style={{
-            padding: '0.7rem 1.4rem', borderRadius: 8, border: 'none',
-            background: '#2563eb', color: '#fff', fontWeight: 700,
-            cursor: 'pointer', fontSize: '0.95rem',
+            padding: '0.75rem 1.75rem',
+            borderRadius: 'var(--llp-r-sm)',
+            border: 'none',
+            background: 'var(--llp-blue)',
+            color: '#fff',
+            fontWeight: 700,
+            cursor: 'pointer',
+            fontSize: '0.95rem',
+            fontFamily: 'inherit',
+            transition: 'background var(--llp-t-sm) var(--llp-ease)',
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--llp-blue-dark)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--llp-blue)' }}
         >
-          Start a project →
+          Start a project
         </button>
       </main>
     )
   }
 
+  // ── Projects list ──────────────────────────────────────────────────────────
+
   return (
     <main
       aria-labelledby="saved-heading"
-      style={{ maxWidth: 680, margin: '0 auto', padding: '2rem 1rem' }}
+      className="llp-page-enter"
+      style={{ maxWidth: 700, margin: '0 auto', padding: '2rem 1.25rem 3rem' }}
     >
-      <header style={{ marginBottom: '1.5rem' }}>
-        <h1 id="saved-heading" style={{ margin: '0 0 0.3rem', fontSize: '1.6rem', fontWeight: 700 }}>
+      <header style={{ marginBottom: '1.75rem' }}>
+        <h1
+          id="saved-heading"
+          style={{
+            margin: '0 0 0.3rem',
+            fontSize: '1.5rem',
+            fontWeight: 800,
+            color: 'var(--llp-text)',
+            letterSpacing: '-0.02em',
+          }}
+        >
           Saved projects
         </h1>
-        <p style={{ margin: 0, color: '#666', fontSize: '0.9rem' }}>
+        <p style={{ margin: 0, color: 'var(--llp-text-muted)', fontSize: '0.9rem' }}>
           {projects.length} {projects.length === 1 ? 'project' : 'projects'}{' '}
           {user ? 'synced to your account.' : 'stored locally on this device.'}
         </p>
@@ -215,6 +308,7 @@ export default function SavedProjects() {
           const totalBoards = project.result.shoppingList.reduce((s, e) => s + e.quantity, 0)
           const purchasedCount = project.purchasedItems.length
           const totalItems = project.result.shoppingList.length
+          const allPurchased = purchasedCount === totalItems && totalItems > 0
           const projectLabel = project.result.projectType
             .replace(/-/g, ' ')
             .replace(/\b\w/g, (c) => c.toUpperCase())
@@ -223,28 +317,62 @@ export default function SavedProjects() {
             <li
               key={project.id}
               style={{
-                background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12,
+                background: 'var(--llp-surface)',
+                border: '1.5px solid var(--llp-border)',
+                borderRadius: 'var(--llp-r-lg)',
                 padding: '1.25rem 1.5rem',
-                boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
+                boxShadow: 'var(--llp-shadow-sm)',
               }}
             >
               {/* Project header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                <div>
-                  <h2 style={{ margin: '0 0 0.15rem', fontSize: '1rem', fontWeight: 700 }}>{project.name}</h2>
-                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#888' }}>
-                    {projectLabel} · {new Date(project.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '0.75rem',
+                  gap: '1rem',
+                }}
+              >
+                <div style={{ minWidth: 0 }}>
+                  <h2
+                    style={{
+                      margin: '0 0 0.15rem',
+                      fontSize: '1rem',
+                      fontWeight: 700,
+                      color: 'var(--llp-text)',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {project.name}
+                  </h2>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--llp-text-muted)' }}>
+                    {projectLabel} ·{' '}
+                    {new Date(project.createdAt).toLocaleDateString('en-US', {
+                      month: 'short', day: 'numeric', year: 'numeric',
+                    })}
                   </p>
                 </div>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
                   <button
                     onClick={() => handleOpen(project)}
                     aria-label={`View ${project.name}`}
                     style={{
-                      padding: '0.35rem 0.75rem', borderRadius: 6, fontSize: '0.8rem',
-                      border: '1.5px solid #2563eb', background: '#eff6ff',
-                      color: '#2563eb', fontWeight: 600, cursor: 'pointer',
+                      padding: '0.38rem 0.85rem',
+                      borderRadius: 'var(--llp-r-sm)',
+                      fontSize: '0.8rem',
+                      border: '1.5px solid var(--llp-blue)',
+                      background: 'var(--llp-blue)',
+                      color: '#fff',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      transition: 'background var(--llp-t-sm) var(--llp-ease)',
                     }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--llp-blue-dark)' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--llp-blue)' }}
                   >
                     View
                   </button>
@@ -252,9 +380,24 @@ export default function SavedProjects() {
                     onClick={() => setDeleteTarget({ id: project.id, name: project.name })}
                     aria-label={`Delete ${project.name}`}
                     style={{
-                      padding: '0.35rem 0.75rem', borderRadius: 6, fontSize: '0.8rem',
-                      border: '1.5px solid #fca5a5', background: '#fff',
-                      color: '#dc2626', fontWeight: 600, cursor: 'pointer',
+                      padding: '0.38rem 0.85rem',
+                      borderRadius: 'var(--llp-r-sm)',
+                      fontSize: '0.8rem',
+                      border: '1.5px solid var(--llp-border)',
+                      background: '#fff',
+                      color: 'var(--llp-text-muted)',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      transition: 'border-color var(--llp-t-sm) var(--llp-ease), color var(--llp-t-sm) var(--llp-ease)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--llp-red)'
+                      e.currentTarget.style.color = 'var(--llp-red)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--llp-border)'
+                      e.currentTarget.style.color = 'var(--llp-text-muted)'
                     }}
                   >
                     Delete
@@ -263,20 +406,47 @@ export default function SavedProjects() {
               </div>
 
               {/* Stats row */}
-              <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '0.85rem', fontSize: '0.82rem', color: '#555' }}>
-                <span><strong style={{ color: '#1a1a1a' }}>{totalBoards}</strong> pieces</span>
-                <span><strong style={{ color: '#1a1a1a' }}>{project.result.totalBoardFeet.toFixed(0)}</strong> bd ft</span>
-                <span><strong style={{ color: '#1a1a1a' }}>${project.result.estimatedCostMin}–${project.result.estimatedCostMax}</strong></span>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '1.5rem',
+                  marginBottom: '0.9rem',
+                  fontSize: '0.82rem',
+                  color: 'var(--llp-text-muted)',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <span>
+                  <strong style={{ color: 'var(--llp-text)', fontWeight: 700 }}>{totalBoards}</strong> pieces
+                </span>
+                <span>
+                  <strong style={{ color: 'var(--llp-text)', fontWeight: 700 }}>
+                    {project.result.totalBoardFeet.toFixed(0)}
+                  </strong>{' '}
+                  bd ft
+                </span>
+                <span>
+                  <strong style={{ color: 'var(--llp-text)', fontWeight: 700 }}>
+                    ${project.result.estimatedCostMin}–${project.result.estimatedCostMax}
+                  </strong>
+                </span>
                 {purchasedCount > 0 && (
-                  <span style={{ color: '#059669', fontWeight: 600 }}>
+                  <span style={{ color: allPurchased ? 'var(--llp-green)' : 'var(--llp-blue)', fontWeight: 700 }}>
                     {purchasedCount}/{totalItems} purchased
+                    {allPurchased && ' ✓'}
                   </span>
                 )}
               </div>
 
-              {/* Shopping list with purchased toggles */}
+              {/* Shopping list with purchase checkboxes */}
               <ul
-                style={{ borderTop: '1px solid #f3f4f6', paddingTop: '0.6rem', listStyle: 'none', padding: '0.6rem 0 0', margin: 0 }}
+                style={{
+                  borderTop: '1px solid var(--llp-border-light)',
+                  paddingTop: '0.6rem',
+                  listStyle: 'none',
+                  padding: '0.6rem 0 0',
+                  margin: 0,
+                }}
                 aria-label={`Shopping list for ${project.name}`}
               >
                 {project.result.shoppingList.map((entry, i) => {
@@ -284,36 +454,58 @@ export default function SavedProjects() {
                   const purchased = project.purchasedItems.includes(key)
                   const itemLabel = `${entry.quantity} ${entry.nominalSize} × ${entry.length}ft`
                   return (
-                    <li key={i} style={{ padding: '0.25rem 0' }}>
+                    <li key={i} style={{ padding: '0.22rem 0' }}>
                       <button
                         type="button"
                         onClick={() => togglePurchased(project.id, key)}
                         aria-pressed={purchased}
                         aria-label={`${itemLabel} — ${purchased ? 'purchased, click to unmark' : 'click to mark as purchased'}`}
                         style={{
-                          display: 'flex', alignItems: 'center', gap: '0.65rem',
-                          width: '100%', background: 'none', border: 'none',
-                          padding: '0.2rem 0', cursor: 'pointer', textAlign: 'left',
-                          opacity: purchased ? 0.45 : 1, transition: 'opacity 0.15s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.65rem',
+                          width: '100%',
+                          background: 'none',
+                          border: 'none',
+                          padding: '0.15rem 0',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          fontFamily: 'inherit',
+                          opacity: purchased ? 0.45 : 1,
+                          transition: 'opacity var(--llp-t-sm) var(--llp-ease)',
                         }}
                       >
+                        {/* Custom checkbox */}
                         <span
                           aria-hidden="true"
                           style={{
-                            width: 18, height: 18, borderRadius: 4, display: 'flex',
-                            alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                            border: `2px solid ${purchased ? '#059669' : '#d1d5db'}`,
-                            background: purchased ? '#059669' : '#fff',
-                            transition: 'all 0.12s',
+                            width: 18,
+                            height: 18,
+                            borderRadius: 4,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            border: `2px solid ${purchased ? 'var(--llp-green)' : 'var(--llp-border)'}`,
+                            background: purchased ? 'var(--llp-green)' : '#fff',
+                            transition: 'all var(--llp-t-sm) var(--llp-ease)',
                           }}
                         >
-                          {purchased && <span style={{ color: '#fff', fontSize: 11, lineHeight: 1 }}>✓</span>}
+                          {purchased && (
+                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                              <path d="M2 5l2.5 2.5 4-4" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
                         </span>
-                        <span style={{
-                          fontSize: '0.86rem', color: '#333',
-                          textDecoration: purchased ? 'line-through' : 'none',
-                        }}>
-                          <strong>{entry.quantity}×</strong> {entry.nominalSize} × {entry.length}ft
+                        <span
+                          style={{
+                            fontSize: '0.86rem',
+                            color: 'var(--llp-text)',
+                            textDecoration: purchased ? 'line-through' : 'none',
+                          }}
+                        >
+                          <strong style={{ fontWeight: 700 }}>{entry.quantity}×</strong>{' '}
+                          {entry.nominalSize} × {entry.length}ft
                         </span>
                       </button>
                     </li>

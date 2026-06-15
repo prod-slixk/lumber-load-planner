@@ -1,13 +1,85 @@
+/* ════════════════════════════════════════════════════════════════════
+   Lumber Load Planner — Design System
+   Palette: Lowe's Brand Blue (#004990) + clean retail neutrals
+   Motion: 60fps — cubic-bezier spring physics, no bounce easing
+   Rules: No pure black, no Inter font, no outer glows, no emoji icons
+         in UI chrome, smooth transitions 150–220ms
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Design Tokens ──────────────────────────────────────────────── */
+:root {
+  /* Lowe's Brand */
+  --llp-blue:           #004990;
+  --llp-blue-dark:      #003876;
+  --llp-blue-hover:     #003D80;
+  --llp-blue-light:     #E6EEF8;
+  --llp-blue-xlight:    #F0F5FB;
+
+  /* Lowe's Red — errors + destructive only */
+  --llp-red:            #CC0000;
+  --llp-red-dark:       #AA0000;
+  --llp-red-light:      #FFF0F0;
+  --llp-red-border:     #F5BEBE;
+
+  /* Success / purchased states */
+  --llp-green:          #1D6C34;
+  --llp-green-light:    #E5F4EB;
+  --llp-green-border:   #A8D5B5;
+
+  /* Tips / callouts */
+  --llp-orange:         #C45000;
+  --llp-orange-light:   #FFF5ED;
+  --llp-orange-border:  #F5C98A;
+
+  /* Neutrals */
+  --llp-bg:             #F4F5F7;
+  --llp-surface:        #FFFFFF;
+  --llp-surface-raised: #FDFDFE;
+  --llp-border:         #D8DCE0;
+  --llp-border-light:   #ECEEF1;
+
+  /* Text hierarchy */
+  --llp-text:           #1A2533;
+  --llp-text-muted:     #6B7685;
+  --llp-text-hint:      #9EA8B3;
+  --llp-text-invert:    #FFFFFF;
+
+  /* Shadows — no outer glows, no colored glows */
+  --llp-shadow-xs:  0 1px 2px rgba(0,0,0,0.06);
+  --llp-shadow-sm:  0 1px 4px rgba(0,0,0,0.08);
+  --llp-shadow-md:  0 2px 10px rgba(0,0,0,0.10);
+  --llp-shadow-lg:  0 8px 28px rgba(0,0,0,0.12);
+
+  /* Motion — 60fps standard, spring for entrances */
+  --llp-ease:        cubic-bezier(0.4, 0, 0.2, 1);
+  --llp-ease-out:    cubic-bezier(0, 0, 0.2, 1);
+  --llp-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --llp-t-sm:        150ms;
+  --llp-t-md:        220ms;
+  --llp-t-lg:        350ms;
+
+  /* Radii */
+  --llp-r-sm:  6px;
+  --llp-r-md:  10px;
+  --llp-r-lg:  14px;
+  --llp-r-pill: 999px;
+}
+
+/* ── Reset ──────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
+/* ── Base ───────────────────────────────────────────────────────── */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  background: #f8f7f4;
-  color: #1a1a1a;
-  line-height: 1.5;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+               Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--llp-bg);
+  color: var(--llp-text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button {
@@ -15,6 +87,192 @@ button {
   cursor: pointer;
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4, h5, h6 {
   line-height: 1.2;
+  margin-top: 0;
 }
+
+/* ── Accessibility ──────────────────────────────────────────────── */
+:focus-visible {
+  outline: 3px solid var(--llp-blue);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Visually hidden but accessible */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ── Keyframes ──────────────────────────────────────────────────── */
+@keyframes llp-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes llp-fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Page Entrance ──────────────────────────────────────────────── */
+.llp-page-enter {
+  animation: llp-fadeInUp var(--llp-t-md) var(--llp-ease-spring) both;
+}
+
+/* ── Navigation ─────────────────────────────────────────────────── */
+.llp-nav {
+  background: var(--llp-blue);
+  padding: 0 1.25rem;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+}
+
+.llp-nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+}
+
+.llp-nav-logo:hover {
+  color: rgba(255,255,255,0.9);
+}
+
+.llp-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.llp-nav-link {
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--llp-r-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.82);
+  transition: background var(--llp-t-sm) var(--llp-ease),
+              color var(--llp-t-sm) var(--llp-ease);
+}
+
+.llp-nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.llp-nav-link-active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.20);
+}
+
+/* ── Project Cards ──────────────────────────────────────────────── */
+.llp-project-card {
+  padding: 1.5rem;
+  text-align: left;
+  border: 1.5px solid var(--llp-border);
+  border-radius: var(--llp-r-md);
+  background: var(--llp-surface);
+  cursor: pointer;
+  transition:
+    border-color var(--llp-t-sm) var(--llp-ease),
+    box-shadow var(--llp-t-sm) var(--llp-ease),
+    transform var(--llp-t-sm) var(--llp-ease);
+  display: block;
+  width: 100%;
+  font-family: inherit;
+  animation: llp-fadeInUp var(--llp-t-md) var(--llp-ease-spring) both;
+}
+
+.llp-project-card:hover {
+  border-color: var(--llp-blue);
+  box-shadow: 0 4px 16px rgba(0, 73, 144, 0.14);
+  transform: translateY(-2px);
+}
+
+.llp-project-card:active {
+  transform: translateY(0);
+  box-shadow: var(--llp-shadow-xs);
+}
+
+/* Stagger card entrances */
+.llp-project-card:nth-child(1) { animation-delay:   0ms; }
+.llp-project-card:nth-child(2) { animation-delay:  60ms; }
+.llp-project-card:nth-child(3) { animation-delay: 120ms; }
+.llp-project-card:nth-child(4) { animation-delay: 180ms; }
+.llp-project-card:nth-child(5) { animation-delay: 240ms; }
+
+/* ── Accordion (LumberGuide) ────────────────────────────────────── */
+.llp-accordion-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.1rem;
+  background: var(--llp-surface);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background var(--llp-t-sm) var(--llp-ease);
+}
+
+.llp-accordion-btn:hover {
+  background: var(--llp-blue-xlight);
+}
+
+.llp-accordion-btn[aria-expanded='true'] {
+  background: var(--llp-blue-xlight);
+  color: var(--llp-blue-dark);
+}
+
+.llp-accordion-chevron {
+  width: 18px;
+  height: 18px;
+  color: var(--llp-text-muted);
+  transition: transform var(--llp-t-md) var(--llp-ease-spring);
+  flex-shrink: 0;
+}
+
+.llp-accordion-btn[aria-expanded='true'] .llp-accordion-chevron {
+  transform: rotate(180deg);
+  color: var(--llp-blue);
+}
+
+.llp-accordion-panel {
+  border-top: 1px solid var(--llp-border-light);
+  background: var(--llp-bg);
+  padding: 1.25rem 1.1rem;
+  animation: llp-fadeIn var(--llp-t-sm) var(--llp-ease) both;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────── */
+::-webkit-scrollbar          { width: 6px; height: 6px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: var(--llp-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--llp-text-hint); }

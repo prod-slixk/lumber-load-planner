@@ -1,24 +1,22 @@
 import { useState } from 'react'
 import { LUMBER_SIZES } from '../data/lumber'
 
-// Common use-cases per nominal size — helps users pick the right board
+// Common use-cases per nominal size
 const COMMON_USES: Record<string, string[]> = {
-  '1x4': ['Fence pickets', 'Trim boards', 'Light shelving'],
-  '1x6': ['Fence boards', 'Siding', 'Shallow shelving'],
-  '1x8': ['Wide trim', 'Paneling', 'Shelving'],
-  '2x4': ['Wall studs', 'Blocking', 'Light framing'],
-  '2x6': ['Deck joists (short spans)', 'Exterior wall framing', 'Raised bed sides'],
-  '2x8': ['Deck joists (standard)', 'Headers', 'Stair stringers'],
+  '1x4':  ['Fence pickets', 'Trim boards', 'Light shelving'],
+  '1x6':  ['Fence boards', 'Siding', 'Shallow shelving'],
+  '1x8':  ['Wide trim', 'Paneling', 'Shelving'],
+  '2x4':  ['Wall studs', 'Blocking', 'Light framing'],
+  '2x6':  ['Deck joists (short spans)', 'Exterior wall framing', 'Raised bed sides'],
+  '2x8':  ['Deck joists (standard)', 'Headers', 'Stair stringers'],
   '2x10': ['Deck joists (longer spans)', 'Floor joists', 'Heavy headers'],
   '2x12': ['Stair stringers', 'Deck beams', 'Long-span floor joists'],
-  '4x4': ['Fence posts', 'Light deck posts', 'Pergola legs'],
-  '4x6': ['Deck beams', 'Pergola rafters'],
-  '6x6': ['Heavy deck posts', 'Pergola columns', 'Structural support'],
+  '4x4':  ['Fence posts', 'Light deck posts', 'Pergola legs'],
+  '4x6':  ['Deck beams', 'Pergola rafters'],
+  '6x6':  ['Heavy deck posts', 'Pergola columns', 'Structural support'],
 }
 
-// ─── SVG Cross-Section ─────────────────────────────────────────────────────
-// Scale: 9px per inch. viewBox fixed 140×80 — largest board (2x12 = 11.25" wide)
-// renders at 101.25px, centred with 19px of horizontal padding.
+// ─── SVG Cross-Section ────────────────────────────────────────────────────────
 
 function BoardSvg({
   actualThickness,
@@ -36,7 +34,6 @@ function BoardSvg({
   const x = (VB_W - w) / 2
   const y = (VB_H - h) / 2
 
-  // Grain lines — 3 evenly spaced vertical stripes inside the board
   const grainSpacing = w / 4
   const grainLines = [1, 2, 3].map((i) => ({
     x1: x + grainSpacing * i,
@@ -49,142 +46,221 @@ function BoardSvg({
     <svg
       viewBox={`0 0 ${VB_W} ${VB_H}`}
       aria-hidden="true"
-      className="w-full max-w-[140px]"
-      style={{ display: 'block' }}
+      style={{ display: 'block', width: '100%', maxWidth: 140 }}
     >
       {/* Board body */}
       <rect
-        x={x}
-        y={y}
-        width={w}
-        height={h}
-        rx={2}
-        fill="#f5deb3"
-        stroke="#8b6914"
+        x={x} y={y} width={w} height={h} rx={2}
+        fill="#F5E6C8"
+        stroke="#A0782A"
         strokeWidth={1.5}
       />
-      {/* Wood grain lines */}
+      {/* Wood grain */}
       {grainLines.map((g, i) => (
         <line
           key={i}
-          x1={g.x1}
-          y1={g.y1}
-          x2={g.x2}
-          y2={g.y2}
-          stroke="#d4a55a"
+          x1={g.x1} y1={g.y1} x2={g.x2} y2={g.y2}
+          stroke="#D4A860"
           strokeWidth={0.75}
           strokeDasharray="3 3"
         />
       ))}
-      {/* Dimension labels */}
+      {/* Width label */}
       <text
         x={VB_W / 2}
         y={y + h + 13}
         textAnchor="middle"
         fontSize={9}
-        fill="#6b7280"
+        fill="#6B7685"
         fontFamily="system-ui, sans-serif"
       >
-        {actualWidth}"
+        {actualWidth}&quot;
       </text>
+      {/* Thickness label */}
       <text
         x={x - 6}
         y={y + h / 2 + 3.5}
         textAnchor="middle"
         fontSize={9}
-        fill="#6b7280"
+        fill="#6B7685"
         fontFamily="system-ui, sans-serif"
       >
-        {actualThickness}"
+        {actualThickness}&quot;
       </text>
     </svg>
   )
 }
 
-// ─── Accordion Item ────────────────────────────────────────────────────────
+// ─── Accordion Item ───────────────────────────────────────────────────────────
 
 function SizeCard({ size }: { size: (typeof LUMBER_SIZES)[number] }) {
   const [open, setOpen] = useState(false)
   const uses = COMMON_USES[size.nominal] ?? []
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div
+      style={{
+        border: '1.5px solid var(--llp-border)',
+        borderRadius: 'var(--llp-r-md)',
+        overflow: 'hidden',
+        background: 'var(--llp-surface)',
+      }}
+    >
+      {/* Accordion trigger */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls={`guide-${size.nominal}`}
-        className="w-full flex items-center justify-between px-4 py-3 bg-white hover:bg-gray-50 transition-colors text-left"
+        className="llp-accordion-btn"
       >
-        <div className="flex items-center gap-3">
-          <span className="text-base font-semibold text-gray-900 font-mono">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+          <span
+            style={{
+              fontSize: '0.975rem',
+              fontWeight: 700,
+              color: open ? 'var(--llp-blue-dark)' : 'var(--llp-text)',
+              fontFamily: 'ui-monospace, "Cascadia Code", Consolas, monospace',
+              letterSpacing: '0.01em',
+            }}
+          >
             {size.nominal}
           </span>
-          <span className="text-sm text-gray-500">
-            {size.nominalThickness}" × {size.nominalWidth}" nominal
+          <span style={{ fontSize: '0.84rem', color: 'var(--llp-text-muted)' }}>
+            {size.nominalThickness}&quot; × {size.nominalWidth}&quot; nominal
           </span>
         </div>
+        {/* Chevron SVG */}
         <svg
-          className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className="llp-accordion-chevron"
           fill="none"
-          viewBox="0 0 24 24"
+          viewBox="0 0 18 18"
           stroke="currentColor"
           aria-hidden="true"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4.5 6.75 9 11.25l4.5-4.5"
+          />
         </svg>
       </button>
 
+      {/* Accordion panel */}
       {open && (
-        <div
-          id={`guide-${size.nominal}`}
-          className="border-t border-gray-200 bg-gray-50 px-4 py-4"
-        >
-          <div className="flex flex-col sm:flex-row gap-6 items-start">
+        <div id={`guide-${size.nominal}`} className="llp-accordion-panel">
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '1.75rem',
+              alignItems: 'flex-start',
+              flexWrap: 'wrap',
+            }}
+          >
             {/* SVG diagram */}
-            <div className="flex-shrink-0 flex flex-col items-center gap-1">
+            <div
+              style={{
+                flexShrink: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '0.4rem',
+                minWidth: 140,
+              }}
+            >
               <BoardSvg
                 actualThickness={size.actualThickness}
                 actualWidth={size.actualWidth}
               />
-              <p className="text-xs text-gray-400 mt-1">Cross-section (to scale)</p>
+              <p style={{ margin: 0, fontSize: '0.74rem', color: 'var(--llp-text-hint)' }}>
+                Cross-section (to scale)
+              </p>
             </div>
 
-            {/* Dimensions table + uses */}
-            <div className="flex-1 space-y-4">
+            {/* Details */}
+            <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+              {/* Dimensions table */}
               <div>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                <h3
+                  style={{
+                    margin: '0 0 0.5rem',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    color: 'var(--llp-blue)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.07em',
+                  }}
+                >
                   Actual dimensions
                 </h3>
-                <table className="text-sm w-full max-w-xs" aria-label={`Dimensions for ${size.nominal}`}>
+                <table
+                  style={{ fontSize: '0.875rem', width: '100%', maxWidth: 260, borderCollapse: 'collapse' }}
+                  aria-label={`Dimensions for ${size.nominal}`}
+                >
                   <thead>
-                    <tr className="text-left text-gray-500 text-xs">
-                      <th className="pb-1 font-medium w-24">Nominal</th>
-                      <th className="pb-1 font-medium">Actual</th>
+                    <tr>
+                      <th style={{ padding: '0 0 0.3rem', fontWeight: 600, color: 'var(--llp-text-muted)', fontSize: '0.75rem', textAlign: 'left', width: 100 }}>
+                        Nominal
+                      </th>
+                      <th style={{ padding: '0 0 0.3rem', fontWeight: 600, color: 'var(--llp-text-muted)', fontSize: '0.75rem', textAlign: 'left' }}>
+                        Actual
+                      </th>
                     </tr>
                   </thead>
-                  <tbody className="text-gray-700">
+                  <tbody>
                     <tr>
-                      <td className="py-0.5 font-mono">{size.nominalThickness}"</td>
-                      <td className="py-0.5 font-mono">{size.actualThickness}"</td>
+                      <td style={{ padding: '0.2rem 0', fontFamily: 'ui-monospace, Consolas, monospace', color: 'var(--llp-text)' }}>
+                        {size.nominalThickness}&quot;
+                      </td>
+                      <td style={{ padding: '0.2rem 0', fontFamily: 'ui-monospace, Consolas, monospace', color: 'var(--llp-text)', fontWeight: 700 }}>
+                        {size.actualThickness}&quot;
+                      </td>
                     </tr>
                     <tr>
-                      <td className="py-0.5 font-mono">{size.nominalWidth}"</td>
-                      <td className="py-0.5 font-mono">{size.actualWidth}"</td>
+                      <td style={{ padding: '0.2rem 0', fontFamily: 'ui-monospace, Consolas, monospace', color: 'var(--llp-text)' }}>
+                        {size.nominalWidth}&quot;
+                      </td>
+                      <td style={{ padding: '0.2rem 0', fontFamily: 'ui-monospace, Consolas, monospace', color: 'var(--llp-text)', fontWeight: 700 }}>
+                        {size.actualWidth}&quot;
+                      </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
+              {/* Common uses */}
               {uses.length > 0 && (
                 <div>
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                  <h3
+                    style={{
+                      margin: '0 0 0.5rem',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      color: 'var(--llp-blue)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.07em',
+                    }}
+                  >
                     Common uses
                   </h3>
-                  <ul className="space-y-1" aria-label={`Common uses for ${size.nominal}`}>
+                  <ul
+                    style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.3rem' }}
+                    aria-label={`Common uses for ${size.nominal}`}
+                  >
                     {uses.map((use) => (
-                      <li key={use} className="text-sm text-gray-700 flex items-start gap-2">
-                        <span className="text-amber-500 mt-0.5" aria-hidden="true">›</span>
+                      <li
+                        key={use}
+                        style={{
+                          fontSize: '0.875rem',
+                          color: 'var(--llp-text)',
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: '0.5rem',
+                        }}
+                      >
+                        <span style={{ color: 'var(--llp-blue)', fontWeight: 700, marginTop: '0.1em', flexShrink: 0 }} aria-hidden="true">›</span>
                         {use}
                       </li>
                     ))}
@@ -192,11 +268,21 @@ function SizeCard({ size }: { size: (typeof LUMBER_SIZES)[number] }) {
                 </div>
               )}
 
+              {/* Available lengths */}
               <div>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                <h3
+                  style={{
+                    margin: '0 0 0.4rem',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    color: 'var(--llp-blue)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.07em',
+                  }}
+                >
                   Available lengths
                 </h3>
-                <p className="text-sm text-gray-700">
+                <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--llp-text)' }}>
                   {size.availableLengths.map((l) => `${l}'`).join(', ')}
                 </p>
               </div>
@@ -208,33 +294,60 @@ function SizeCard({ size }: { size: (typeof LUMBER_SIZES)[number] }) {
   )
 }
 
-// ─── Page ──────────────────────────────────────────────────────────────────
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function LumberGuide() {
   return (
-    <main className="max-w-2xl mx-auto px-4 py-8" aria-labelledby="guide-heading">
-      <header className="mb-8">
-        <h1 id="guide-heading" className="text-2xl font-bold text-gray-900 mb-2">
+    <main
+      aria-labelledby="guide-heading"
+      className="llp-page-enter"
+      style={{ maxWidth: 680, margin: '0 auto', padding: '2rem 1.25rem 3rem' }}
+    >
+      <header style={{ marginBottom: '2rem' }}>
+        <h1
+          id="guide-heading"
+          style={{
+            margin: '0 0 0.5rem',
+            fontSize: '1.5rem',
+            fontWeight: 800,
+            color: 'var(--llp-text)',
+            letterSpacing: '-0.02em',
+          }}
+        >
           Lumber Size Guide
         </h1>
-        <p className="text-gray-600">
-          Lumber is sold by <em>nominal</em> size — the number you ask for at the store. The{' '}
-          <em>actual</em> size is smaller after drying and planing. Click any size to see its
+        <p style={{ margin: 0, color: 'var(--llp-text-muted)', fontSize: '0.95rem', maxWidth: 520, lineHeight: 1.55 }}>
+          Lumber is sold by <em>nominal</em> size — what you ask for at the store. The{' '}
+          <em>actual</em> size is smaller after drying and planing. Select any size to see its
           cross-section and typical applications.
         </p>
       </header>
 
+      {/* Accordion list */}
       <section aria-label="Lumber sizes">
-        <div className="space-y-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
           {LUMBER_SIZES.map((size) => (
             <SizeCard key={size.nominal} size={size} />
           ))}
         </div>
       </section>
 
-      <footer className="mt-8 p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
-        <strong>Tip:</strong> The calculator already uses actual dimensions for all load
-        calculations — you never need to convert manually.
+      {/* Tip footer */}
+      <footer
+        style={{
+          marginTop: '2rem',
+          padding: '1rem 1.1rem',
+          background: 'var(--llp-orange-light)',
+          border: '1px solid var(--llp-orange-border)',
+          borderLeft: '4px solid var(--llp-orange)',
+          borderRadius: 'var(--llp-r-md)',
+          fontSize: '0.875rem',
+          color: 'var(--llp-text)',
+        }}
+      >
+        <strong style={{ color: 'var(--llp-orange)' }}>Pro tip:</strong>{' '}
+        The calculator already uses actual dimensions for all load calculations — you never need
+        to convert manually.
       </footer>
     </main>
   )
