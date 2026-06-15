@@ -3,6 +3,7 @@ import { calculateFence } from './fence'
 import { calculateRaisedBed } from './raisedBed'
 import { calculateFramingWall } from './framingWall'
 import { calculateShedFloor } from './shedFloor'
+import { calculatePergola } from './pergola'
 import type { DimensionInputs, WasteFactor, CalculationResult } from '../../types'
 
 /**
@@ -19,6 +20,7 @@ export function calculateProject(
     case 'raised-garden-bed':  return calculateRaisedBed(dims, wasteFactor)
     case 'framing-wall':       return calculateFramingWall(dims, wasteFactor)
     case 'shed-floor':         return calculateShedFloor(dims, wasteFactor)
+    case 'pergola':            return calculatePergola(dims, wasteFactor)
   }
 }
 
@@ -28,4 +30,5 @@ export {
   calculateRaisedBed,
   calculateFramingWall,
   calculateShedFloor,
+  calculatePergola,
 }

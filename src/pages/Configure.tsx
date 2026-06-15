@@ -9,6 +9,7 @@ import FenceForm from '../components/forms/FenceForm'
 import RaisedGardenBedForm from '../components/forms/RaisedGardenBedForm'
 import FramingWallForm from '../components/forms/FramingWallForm'
 import ShedFloorForm from '../components/forms/ShedFloorForm'
+import PergolaForm from '../components/forms/PergolaForm'
 import { UnitModeToggle } from '../components/forms/UnitModeToggle'
 
 const WASTE_OPTIONS: WasteFactor[] = [0.05, 0.10, 0.15]
@@ -37,6 +38,7 @@ export default function Configure() {
     'raised-garden-bed': <RaisedGardenBedForm onSubmit={handleSubmit} />,
     'framing-wall':    <FramingWallForm onSubmit={handleSubmit} />,
     'shed-floor':      <ShedFloorForm onSubmit={handleSubmit} />,
+    pergola:           <PergolaForm onSubmit={handleSubmit} />,
   }
 
   return (

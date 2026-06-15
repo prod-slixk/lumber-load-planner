@@ -17,6 +17,7 @@ export type ProjectType =
   | 'raised-garden-bed'
   | 'framing-wall'
   | 'shed-floor'
+  | 'pergola'
 
 // ─── Lumber Reference Types ────────────────────────────────────────────────
 
@@ -103,12 +104,23 @@ export interface ShedFloorDimensions {
   useRimJoists: boolean
 }
 
+export interface PergolaDimensions {
+  projectType: 'pergola'
+  lengthFt: number              // along the main axis
+  widthFt: number               // span between beam rows
+  postHeightFt: number          // post height above grade
+  postSpacingFt: 6 | 8 | 10    // spacing between posts along the length
+  postSize: '4x4' | '6x6'      // post cross-section
+  rafterSpacingIn: 12 | 16 | 24 // rafter on-center spacing
+}
+
 export type DimensionInputs =
   | DeckDimensions
   | FenceDimensions
   | RaisedGardenBedDimensions
   | FramingWallDimensions
   | ShedFloorDimensions
+  | PergolaDimensions
 
 // ─── Calculation Result ────────────────────────────────────────────────────
 
@@ -175,5 +187,11 @@ export const PROJECT_META: Record<ProjectType, ProjectMeta> = {
     label: 'Shed Floor',
     description: 'Pressure-treated floor frame for a shed or outbuilding',
     icon: '🏚️',
+  },
+  pergola: {
+    type: 'pergola',
+    label: 'Pergola',
+    description: 'Freestanding pergola with posts, beams, and rafters',
+    icon: '⛩️',
   },
 }
