@@ -14,10 +14,17 @@ interface FormFieldProps {
  */
 export function FormField({ id, label, error, hint, children }: FormFieldProps) {
   return (
-    <div style={{ marginBottom: '1.1rem' }}>
+    <div style={{ marginBottom: '1.25rem' }}>
       <label
         htmlFor={id}
-        style={{ display: 'block', fontWeight: 500, marginBottom: '0.3rem', fontSize: '0.875rem' }}
+        style={{
+          display: 'block',
+          fontWeight: 600,
+          marginBottom: '0.35rem',
+          fontSize: '0.875rem',
+          color: '#1A2533',
+          letterSpacing: '0.01em',
+        }}
       >
         {label}
       </label>
@@ -25,7 +32,7 @@ export function FormField({ id, label, error, hint, children }: FormFieldProps) 
       {children}
 
       {hint && (
-        <p style={{ margin: '0.2rem 0 0', fontSize: '0.78rem', color: '#6b7280', lineHeight: 1.4 }}>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.78rem', color: '#6b7280', lineHeight: 1.45 }}>
           {hint}
         </p>
       )}
@@ -33,7 +40,7 @@ export function FormField({ id, label, error, hint, children }: FormFieldProps) 
         <p
           role="alert"
           aria-live="polite"
-          style={{ margin: '0.2rem 0 0', fontSize: '0.78rem', color: '#dc2626' }}
+          style={{ margin: '0.25rem 0 0', fontSize: '0.78rem', color: '#dc2626', fontWeight: 500 }}
         >
           {error}
         </p>

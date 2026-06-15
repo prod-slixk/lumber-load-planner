@@ -7,7 +7,8 @@ import { calculateFence } from '../../lib/calculations'
 import { useLLPStore } from '../../store'
 import { FormField } from './FormField'
 import { UnitInput } from './UnitInput'
-import { inputStyle, selectStyle, submitBtnStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { inputStyle, selectStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { SubmitButton } from './SubmitButton'
 
 const schema = z.object({
   runLengthFt: z.coerce
@@ -138,7 +139,7 @@ export default function FenceForm({ onSubmit }: Props) {
         </div>
       )}
 
-      <button type="submit" style={submitBtnStyle}>Generate shopping list →</button>
+      <SubmitButton />
     </form>
   )
 }

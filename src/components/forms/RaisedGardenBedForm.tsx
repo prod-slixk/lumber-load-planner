@@ -7,7 +7,8 @@ import { calculateRaisedBed } from '../../lib/calculations'
 import { useLLPStore } from '../../store'
 import { FormField } from './FormField'
 import { UnitInput } from './UnitInput'
-import { inputStyle, selectStyle, submitBtnStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { inputStyle, selectStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { SubmitButton } from './SubmitButton'
 
 const BOARD_SIZES = ['2x6', '2x8', '2x10', '2x12'] as const
 
@@ -106,7 +107,7 @@ export default function RaisedGardenBedForm({ onSubmit }: Props) {
         </div>
       )}
 
-      <button type="submit" style={submitBtnStyle}>Generate shopping list →</button>
+      <SubmitButton />
     </form>
   )
 }

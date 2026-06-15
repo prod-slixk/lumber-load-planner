@@ -7,7 +7,8 @@ import { calculateDeck } from '../../lib/calculations'
 import { useLLPStore } from '../../store'
 import { FormField } from './FormField'
 import { UnitInput } from './UnitInput'
-import { selectStyle, submitBtnStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { selectStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { SubmitButton } from './SubmitButton'
 
 const schema = z.object({
   lengthFt: z.coerce
@@ -127,7 +128,7 @@ export default function DeckForm({ onSubmit }: Props) {
         </div>
       )}
 
-      <button type="submit" style={submitBtnStyle}>Generate shopping list →</button>
+      <SubmitButton />
     </form>
   )
 }

@@ -7,7 +7,8 @@ import { calculateFramingWall } from '../../lib/calculations'
 import { useLLPStore } from '../../store'
 import { FormField } from './FormField'
 import { UnitInput } from './UnitInput'
-import { inputStyle, submitBtnStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { inputStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { SubmitButton } from './SubmitButton'
 
 const OC_OPTIONS = [12, 16, 24] as const
 
@@ -130,7 +131,7 @@ export default function FramingWallForm({ onSubmit }: Props) {
         </div>
       )}
 
-      <button type="submit" style={submitBtnStyle}>Generate shopping list →</button>
+      <SubmitButton />
     </form>
   )
 }

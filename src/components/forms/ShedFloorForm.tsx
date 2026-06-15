@@ -6,7 +6,8 @@ import type { ShedFloorDimensions } from '../../types'
 import { calculateShedFloor } from '../../lib/calculations'
 import { useLLPStore } from '../../store'
 import { UnitInput } from './UnitInput'
-import { inputStyle, checkboxRowStyle, submitBtnStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { inputStyle, checkboxRowStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { SubmitButton } from './SubmitButton'
 
 const JOIST_OC_OPTIONS = [12, 16, 24] as const
 
@@ -124,7 +125,7 @@ export default function ShedFloorForm({ onSubmit }: Props) {
         </div>
       )}
 
-      <button type="submit" style={submitBtnStyle}>Generate shopping list →</button>
+      <SubmitButton />
     </form>
   )
 }
