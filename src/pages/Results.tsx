@@ -225,6 +225,12 @@ export default function Results() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Must be before early return — Rules of Hooks
+  const totalBoards = useMemo(
+    () => result?.shoppingList.reduce((s, e) => s + e.quantity, 0) ?? 0,
+    [result]
+  )
+
   if (!result || !dimensionInputs) {
     navigate('/', { replace: true })
     return null
@@ -278,11 +284,6 @@ export default function Results() {
     setSaveModal(false)
     setSaveName('')
   }
-
-  const totalBoards = useMemo(
-    () => result.shoppingList.reduce((s, e) => s + e.quantity, 0),
-    [result]
-  )
 
   const projectLabel = result.projectType
     .replace(/-/g, ' ')

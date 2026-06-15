@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import type { ReactElement } from 'react'
 import { useLLPStore } from '../store'
 import { calculateProject } from '../lib/calculations'
 import { PROJECT_META, WASTE_FACTOR_LABELS } from '../types'
@@ -30,7 +31,7 @@ export default function Configure() {
     navigate('/results')
   }
 
-  const formMap: Record<string, JSX.Element> = {
+  const formMap: Record<string, ReactElement> = {
     deck:              <DeckForm onSubmit={handleSubmit} />,
     fence:             <FenceForm onSubmit={handleSubmit} />,
     'raised-garden-bed': <RaisedGardenBedForm onSubmit={handleSubmit} />,
