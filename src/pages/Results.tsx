@@ -6,6 +6,8 @@ import { saveProject as saveToSupabase } from '../lib/projects'
 import { useAuth } from '../context/AuthContext'
 import type { WasteFactor, ShoppingListEntry } from '../types'
 import { WASTE_FACTOR_LABELS } from '../types'
+import { estimateTimeline } from '../lib/timeline'
+import { TimelineCard } from '../components/TimelineCard'
 
 const WASTE_OPTIONS: WasteFactor[] = [0.05, 0.10, 0.15]
 
@@ -229,6 +231,11 @@ export default function Results() {
   const totalBoards = useMemo(
     () => result?.shoppingList.reduce((s, e) => s + e.quantity, 0) ?? 0,
     [result]
+  )
+
+  const timeline = useMemo(
+    () => dimensionInputs ? estimateTimeline(dimensionInputs) : null,
+    [dimensionInputs]
   )
 
   if (!result || !dimensionInputs) {
@@ -468,6 +475,9 @@ export default function Results() {
           <ShoppingRow key={i} entry={entry} />
         ))}
       </section>
+
+      {/* ── Build timeline ── */}
+      {timeline && <TimelineCard estimate={timeline} />}
 
       {/* ── Tip callout ── */}
       <aside
