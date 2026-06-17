@@ -8,6 +8,7 @@ import {
   deleteProject as deleteFromSupabase,
 } from '../lib/projects'
 import type { SavedProject } from '../types'
+import { ProjectThumbnail } from '../components/ProjectThumbnail'
 
 // ─── localStorage helpers ─────────────────────────────────────────────────────
 
@@ -328,13 +329,29 @@ export default function SavedProjects() {
               <div
                 style={{
                   display: 'flex',
-                  justifyContent: 'space-between',
                   alignItems: 'flex-start',
                   marginBottom: '0.75rem',
-                  gap: '1rem',
+                  gap: '0.9rem',
                 }}
               >
-                <div style={{ minWidth: 0 }}>
+                {/* SVG thumbnail */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    width: 120,
+                    height: 75,
+                    flexShrink: 0,
+                    borderRadius: 'var(--llp-r-sm)',
+                    overflow: 'hidden',
+                    border: '1px solid var(--llp-border)',
+                    background: '#F8FAFC',
+                  }}
+                >
+                  <ProjectThumbnail dims={project.result.dimensions} />
+                </div>
+
+                {/* Name + meta */}
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <h2
                     style={{
                       margin: '0 0 0.15rem',
@@ -355,6 +372,8 @@ export default function SavedProjects() {
                     })}
                   </p>
                 </div>
+
+                {/* Action buttons */}
                 <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
                   <button
                     onClick={() => handleOpen(project)}
