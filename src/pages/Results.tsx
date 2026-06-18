@@ -8,6 +8,8 @@ import type { WasteFactor, ShoppingListEntry } from '../types'
 import { WASTE_FACTOR_LABELS } from '../types'
 import { estimateTimeline } from '../lib/timeline'
 import { TimelineCard } from '../components/TimelineCard'
+import { getWarnings } from '../lib/warnings'
+import { WarningsCard } from '../components/WarningsCard'
 
 const WASTE_OPTIONS: WasteFactor[] = [0.05, 0.10, 0.15]
 
@@ -235,6 +237,11 @@ export default function Results() {
 
   const timeline = useMemo(
     () => dimensionInputs ? estimateTimeline(dimensionInputs) : null,
+    [dimensionInputs]
+  )
+
+  const warnings = useMemo(
+    () => dimensionInputs ? getWarnings(dimensionInputs) : [],
     [dimensionInputs]
   )
 
@@ -475,6 +482,9 @@ export default function Results() {
           <ShoppingRow key={i} entry={entry} />
         ))}
       </section>
+
+      {/* ── Smart Warnings ── */}
+      {warnings.length > 0 && <WarningsCard warnings={warnings} />}
 
       {/* ── Build timeline ── */}
       {timeline && <TimelineCard estimate={timeline} />}
