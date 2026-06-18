@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react'
 
 export const labelStyle: CSSProperties = {
   display: 'block',
-  fontWeight: 600,
+  fontWeight: 700,
   marginBottom: '0.35rem',
   fontSize: '0.875rem',
   color: '#1A2533',
@@ -19,7 +19,6 @@ export const inputStyle: CSSProperties = {
   fontFamily: 'inherit',
   background: '#fff',
   color: '#1A2533',
-  // No outline:none — browser focus ring must remain visible for a11y
   boxSizing: 'border-box',
   transition: 'border-color 150ms cubic-bezier(0.4,0,0.2,1), box-shadow 150ms cubic-bezier(0.4,0,0.2,1)',
 }
@@ -36,11 +35,10 @@ export const checkboxRowStyle: CSSProperties = {
   gap: '0.6rem',
   fontSize: '0.9rem',
   cursor: 'pointer',
-  padding: '0.5rem 0',          // larger touch target
+  padding: '0.5rem 0',
   userSelect: 'none',
 }
 
-/** Base styles only — hover/active state handled in SubmitButton component */
 export const submitBtnStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
@@ -70,7 +68,24 @@ export const previewBoxStyle: CSSProperties = {
   margin: '0.75rem 0 1.25rem',
 }
 
-/** Used below chip group fields — same visual treatment as FormField hint */
 export const hintStyle: CSSProperties = {
   margin: '0.35rem 0 0',
-  fontSize: '
+  fontSize: '0.78rem',
+  color: '#6b7280',
+  lineHeight: 1.45,
+}
+
+export const chipLabelStyle: CSSProperties = {
+  display: 'block',
+  margin: '0 0 0.5rem',
+  fontSize: '0.875rem',
+  fontWeight: 700,
+  color: '#1A2533',
+  letterSpacing: '0.01em',
+}
+
+export const gridTwoStyle: CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: '1fr 1fr',
+  gap: '0 1.25rem',
+}
