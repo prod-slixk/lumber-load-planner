@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { FenceDimensions } from '../../types'
@@ -7,7 +7,8 @@ import { calculateFence } from '../../lib/calculations'
 import { useLLPStore } from '../../store'
 import { FormField } from './FormField'
 import { UnitInput } from './UnitInput'
-import { inputStyle, selectStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { ChipGroup } from './ChipGroup'
+import { inputStyle, previewBoxStyle, gridTwoStyle, chipLabelStyle, hintStyle } from './shared'
 import { SubmitButton } from './SubmitButton'
 
 const schema = z.object({
@@ -37,6 +38,16 @@ type FormValues = z.infer<typeof schema>
 interface Props {
   onSubmit: (dims: FenceDimensions) => void
 }
+
+const RAIL_CHIPS = [
+  { value: 2, label: '2 rails', sub: 'standard' },
+  { value: 3, label: '3 rails', sub: 'tall / heavy' },
+]
+
+const PICKET_WIDTH_CHIPS = [
+  { value: 3.5, label: '3.5"', sub: '1×4 dog-ear' },
+  { value: 5.5, label: '5.5"', sub: '1×6 privacy' },
+]
 
 export default function FenceForm({ onSubmit }: Props) {
   const unitMode = useLLPStore((s) => s.unitMode)
@@ -80,20 +91,22 @@ export default function FenceForm({ onSubmit }: Props) {
 
   return (
     <form onSubmit={handleSubmit(handleValid)} noValidate>
-      <UnitInput
-        name="runLengthFt"
-        control={control}
-        label="Total run length"
-        unitMode={unitMode}
-        minFt={1}
-        maxFt={1000}
-      />
-      <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '-0.5rem', marginBottom: '1rem' }}>
-        Measure the full linear footage of the fence line, corner to corner.
-      </p>
+      {/* Run length */}
+      <div style={{ marginBottom: '1.25rem' }}>
+        <UnitInput
+          name="runLengthFt"
+          control={control}
+          label="Total run length"
+          unitMode={unitMode}
+          minFt={1}
+          maxFt={1000}
+        />
+        <p style={hintStyle}>Measure the full linear footage of the fence line, corner to corner.</p>
+      </div>
 
+      {/* Post spacing + rail count */}
       <div style={gridTwoStyle}>
-        <div>
+        <div style={{ marginBottom: '1.25rem' }}>
           <UnitInput
             name="postSpacingFt"
             control={control}
@@ -102,39 +115,85 @@ export default function FenceForm({ onSubmit }: Props) {
             minFt={4}
             maxFt={10}
           />
-          <p style={{ fontSize: '0.78rem', color: '#666', marginTop: '0.25rem' }}>
-            6 ft is common; 8 ft reduces post count.
-          </p>
+          <p style={hintStyle}>6 ft is common; 8 ft reduces post count.</p>
         </div>
-        <FormField id="railCount" label="Rails per bay" error={errors.railCount?.message}>
-          <select id="railCount" style={selectStyle} {...register('railCount')}>
-            <option value={2}>2 rails (standard)</option>
-            <option value={3}>3 rails (tall fence / extra support)</option>
-          </select>
-        </FormField>
+
+        <div style={{ marginBottom: '1.25rem' }}>
+          <p id="railCount-label" style={chipLabelStyle}>Rails per bay</p>
+          <Controller
+            name="railCount"
+            control={control}
+            render={({ field }) => (
+              <ChipGroup
+                aria-labelledby="railCount-label"
+                options={RAIL_CHIPS}
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+          {errors.railCount && (
+            <p role="alert" aria-live="polite" style={{ margin: '0.25rem 0 0', fontSize: '0.78rem', color: '#dc2626', fontWeight: 500 }}>
+              {errors.railCount.message}
+            </p>
+          )}
+        </div>
       </div>
 
+      {/* Picket width + gap */}
       <div style={gridTwoStyle}>
-        <FormField id="picketWidthIn" label="Picket width (in)" error={errors.picketWidthIn?.message}
-          hint='3.5&quot; = 1×4 actual. 5.5&quot; = 1×6 actual.'>
-          <select id="picketWidthIn" style={selectStyle} {...register('picketWidthIn')}>
-            <option value={3.5}>3.5&quot; — 1×4 (dog-ear)</option>
-            <option value={5.5}>5.5&quot; — 1×6 (privacy)</option>
-          </select>
-        </FormField>
+        <div style={{ marginBottom: '1.25rem' }}>
+          <p id="picketWidthIn-label" style={chipLabelStyle}>Picket width</p>
+          <Controller
+            name="picketWidthIn"
+            control={control}
+            render={({ field }) => (
+              <ChipGroup
+                aria-labelledby="picketWidthIn-label"
+                options={PICKET_WIDTH_CHIPS}
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+          {errors.picketWidthIn && (
+            <p role="alert" aria-live="polite" style={{ margin: '0.25rem 0 0', fontSize: '0.78rem', color: '#dc2626', fontWeight: 500 }}>
+              {errors.picketWidthIn.message}
+            </p>
+          )}
+        </div>
+
         <FormField id="picketGapIn" label="Gap between pickets (in)" error={errors.picketGapIn?.message}>
-          <input id="picketGapIn" type="number" step="0.25" placeholder="0.5" style={inputStyle} {...register('picketGapIn')} />
+          <input
+            id="picketGapIn"
+            type="number"
+            step="0.25"
+            placeholder="0.5"
+            style={inputStyle}
+            {...register('picketGapIn')}
+          />
         </FormField>
       </div>
 
+      {/* Live estimate */}
       {preview && (
         <div style={previewBoxStyle}>
-          <p style={{ margin: '0 0 0.3rem', fontSize: '0.75rem', color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Live estimate</p>
-          <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>
-            {preview.shoppingList.reduce((s, e) => s + e.quantity, 0)} boards &nbsp;·&nbsp; {preview.totalBoardFeet.toFixed(0)} board feet
+          <p style={{ margin: '0 0 0.5rem', fontSize: '0.72rem', fontWeight: 700, color: 'var(--llp-blue)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--llp-blue)', display: 'inline-block', flexShrink: 0 }} />
+            Live estimate
           </p>
-          <p style={{ margin: '0.2rem 0 0', fontSize: '0.875rem', color: '#555' }}>
-            ~${preview.estimatedCostMin}–${preview.estimatedCostMax} estimated
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--llp-text)', lineHeight: 1 }}>
+              {preview.shoppingList.reduce((s, e) => s + e.quantity, 0)}
+            </span>
+            <span style={{ fontSize: '0.9rem', color: 'var(--llp-text-muted)', fontWeight: 500 }}>boards</span>
+            <span style={{ fontSize: '0.9rem', color: 'var(--llp-border)', margin: '0 0.1rem' }}>·</span>
+            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--llp-text)' }}>
+              {preview.totalBoardFeet.toFixed(0)} board feet
+            </span>
+          </div>
+          <p style={{ margin: '0.3rem 0 0', fontSize: '0.85rem', color: 'var(--llp-text-muted)' }}>
+            Est. cost: <span style={{ fontWeight: 700, color: 'var(--llp-text)' }}>${preview.estimatedCostMin}–${preview.estimatedCostMax}</span>
           </p>
         </div>
       )}

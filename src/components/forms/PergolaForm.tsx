@@ -1,12 +1,13 @@
 import { useMemo } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { PergolaDimensions } from '../../types'
 import { calculatePergola } from '../../lib/calculations'
 import { useLLPStore } from '../../store'
 import { UnitInput } from './UnitInput'
-import { inputStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { ChipGroup } from './ChipGroup'
+import { previewBoxStyle, gridTwoStyle, chipLabelStyle, hintStyle } from './shared'
 import { SubmitButton } from './SubmitButton'
 
 const POST_SPACING_OPTIONS = [6, 8, 10] as const
@@ -39,15 +40,27 @@ interface Props {
   onSubmit: (dims: PergolaDimensions) => void
 }
 
+const POST_SPACING_CHIPS = [
+  { value: 6,  label: '6 ft', sub: 'heavy structure' },
+  { value: 8,  label: '8 ft', sub: 'most common' },
+  { value: 10, label: '10 ft' },
+]
+
+const POST_SIZE_CHIPS = [
+  { value: '4x4', label: '4×4', sub: 'standard' },
+  { value: '6x6', label: '6×6', sub: 'large / heavy' },
+]
+
+const RAFTER_SPACING_CHIPS = [
+  { value: 12, label: '12" OC', sub: 'dense shade' },
+  { value: 16, label: '16" OC', sub: 'good shade' },
+  { value: 24, label: '24" OC', sub: 'open feel' },
+]
+
 export default function PergolaForm({ onSubmit }: Props) {
   const unitMode = useLLPStore((s) => s.unitMode)
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    control,
-  } = useForm<FormValues>({
+  const { handleSubmit, watch, control } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       postHeightFt: 9,
@@ -90,93 +103,93 @@ export default function PergolaForm({ onSubmit }: Props) {
     <form onSubmit={handleSubmit(handleValid)} noValidate>
       {/* Footprint */}
       <div style={gridTwoStyle}>
-        <UnitInput
-          name="lengthFt"
-          control={control}
-          label="Length"
-          unitMode={unitMode}
-          minFt={6}
-          maxFt={60}
-        />
-        <UnitInput
-          name="widthFt"
-          control={control}
-          label="Width"
-          unitMode={unitMode}
-          minFt={6}
-          maxFt={30}
-        />
+        <UnitInput name="lengthFt"     control={control} label="Length"      unitMode={unitMode} minFt={6}  maxFt={60} />
+        <UnitInput name="widthFt"      control={control} label="Width"       unitMode={unitMode} minFt={6}  maxFt={30} />
       </div>
 
       {/* Post height */}
       <div style={{ marginBottom: '1.25rem' }}>
-        <UnitInput
-          name="postHeightFt"
-          control={control}
-          label="Post height"
-          unitMode={unitMode}
-          minFt={7}
-          maxFt={14}
-        />
-        <p style={{ fontSize: '0.78rem', color: '#666', marginTop: '0.25rem' }}>
-          Measured from grade to the top of the post. 8–9 ft is typical.
-        </p>
+        <UnitInput name="postHeightFt" control={control} label="Post height" unitMode={unitMode} minFt={7} maxFt={14} />
+        <p style={hintStyle}>Measured from grade to the top of the post. 8–9 ft is typical.</p>
       </div>
 
-      {/* Post spacing + size */}
-      <div style={gridTwoStyle}>
-        <div>
-          <label htmlFor="postSpacingFt" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#1A2533', marginBottom: '0.25rem', letterSpacing: '0.01em' }}>
-            Post spacing
-          </label>
-          <select id="postSpacingFt" style={inputStyle} {...register('postSpacingFt')}>
-            {POST_SPACING_OPTIONS.map((o) => (
-              <option key={o} value={o}>{o} ft OC</option>
-            ))}
-          </select>
-          <p style={{ fontSize: '0.78rem', color: '#666', marginTop: '0.25rem' }}>
-            8 ft is the most common. 6 ft for heavier shade structures.
-          </p>
-        </div>
+      {/* Post spacing */}
+      <div style={{ marginBottom: '1.25rem' }}>
+        <p id="postSpacingFt-label" style={chipLabelStyle}>Post spacing</p>
+        <Controller
+          name="postSpacingFt"
+          control={control}
+          render={({ field }) => (
+            <ChipGroup
+              aria-labelledby="postSpacingFt-label"
+              options={POST_SPACING_CHIPS}
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
+        <p style={hintStyle}>8 ft is the most common. 6 ft for heavier shade structures.</p>
+      </div>
 
-        <div>
-          <label htmlFor="postSize" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#1A2533', marginBottom: '0.25rem', letterSpacing: '0.01em' }}>
-            Post size
-          </label>
-          <select id="postSize" style={inputStyle} {...register('postSize')}>
-            <option value="4x4">4×4 — standard pergola</option>
-            <option value="6x6">6×6 — large / heavy structure</option>
-          </select>
-        </div>
+      {/* Post size */}
+      <div style={{ marginBottom: '1.25rem' }}>
+        <p id="postSize-label" style={chipLabelStyle}>Post size</p>
+        <Controller
+          name="postSize"
+          control={control}
+          render={({ field }) => (
+            <ChipGroup
+              aria-labelledby="postSize-label"
+              options={POST_SIZE_CHIPS}
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
+        <p style={hintStyle}>6×6 significantly reduces sway and is often required for freestanding pergolas over 14 ft.</p>
       </div>
 
       {/* Rafter spacing */}
       <div style={{ marginBottom: '1.25rem' }}>
-        <label htmlFor="rafterSpacingIn" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#1A2533', marginBottom: '0.25rem', letterSpacing: '0.01em' }}>
-          Rafter spacing
-        </label>
-        <select id="rafterSpacingIn" style={inputStyle} {...register('rafterSpacingIn')}>
-          {RAFTER_SPACING_OPTIONS.map((o) => (
-            <option key={o} value={o}>{o}&quot; OC</option>
-          ))}
-        </select>
-        <p style={{ fontSize: '0.78rem', color: '#666', marginTop: '0.25rem' }}>
-          16&quot; OC gives good shade. 12&quot; OC for denser coverage or climbing plants.
-        </p>
+        <p id="rafterSpacingIn-label" style={chipLabelStyle}>Rafter spacing</p>
+        <Controller
+          name="rafterSpacingIn"
+          control={control}
+          render={({ field }) => (
+            <ChipGroup
+              aria-labelledby="rafterSpacingIn-label"
+              options={RAFTER_SPACING_CHIPS}
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
+        <p style={hintStyle}>16" OC gives good shade. 12" OC for denser coverage or climbing plants.</p>
       </div>
 
+      {/* Live estimate */}
       {preview && (
         <div style={previewBoxStyle}>
-          <p style={{ margin: '0 0 0.3rem', fontSize: '0.75rem', color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Live estimate</p>
-          <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>
-            {preview.shoppingList.reduce((s, e) => s + e.quantity, 0)} pieces &nbsp;·&nbsp; {preview.totalBoardFeet.toFixed(0)} board feet
+          <p style={{ margin: '0 0 0.5rem', fontSize: '0.72rem', fontWeight: 700, color: 'var(--llp-blue)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--llp-blue)', display: 'inline-block', flexShrink: 0 }} />
+            Live estimate
           </p>
-          <p style={{ margin: '0.2rem 0 0', fontSize: '0.875rem', color: '#555' }}>
-            ~${preview.estimatedCostMin}–${preview.estimatedCostMax} estimated
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--llp-text)', lineHeight: 1 }}>
+              {preview.shoppingList.reduce((s, e) => s + e.quantity, 0)}
+            </span>
+            <span style={{ fontSize: '0.9rem', color: 'var(--llp-text-muted)', fontWeight: 500 }}>pieces</span>
+            <span style={{ fontSize: '0.9rem', color: 'var(--llp-border)', margin: '0 0.1rem' }}>·</span>
+            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--llp-text)' }}>
+              {preview.totalBoardFeet.toFixed(0)} board feet
+            </span>
+          </div>
+          <p style={{ margin: '0.3rem 0 0', fontSize: '0.85rem', color: 'var(--llp-text-muted)' }}>
+            Est. cost: <span style={{ fontWeight: 700, color: 'var(--llp-text)' }}>${preview.estimatedCostMin}–${preview.estimatedCostMax}</span>
           </p>
           {values.widthFt > 12 && (
-            <p style={{ margin: '0.4rem 0 0', fontSize: '0.8rem', color: '#b45309' }}>
-              ⚠ Span &gt; 12 ft — using 2×8 rafters for this width.
+            <p style={{ margin: '0.4rem 0 0', fontSize: '0.8rem', color: '#b45309', fontWeight: 500 }}>
+              Span &gt; 12 ft — calculator uses 2×8 rafters for this width.
             </p>
           )}
         </div>

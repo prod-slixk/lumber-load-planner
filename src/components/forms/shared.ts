@@ -64,15 +64,13 @@ export const submitBtnStyle: CSSProperties = {
 
 export const previewBoxStyle: CSSProperties = {
   background: 'var(--llp-blue-light)',
-  border: '1px solid var(--llp-blue-border, #B8CCE8)',
-  borderLeft: '3px solid var(--llp-blue)',
-  borderRadius: '8px',
+  border: '1.5px solid var(--llp-blue-border, #B8CCE8)',
+  borderRadius: '10px',
   padding: '1rem 1.25rem',
-  margin: '1.25rem 0 0.75rem',
+  margin: '0.75rem 0 1.25rem',
 }
 
-export const gridTwoStyle: CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: '0 1.25rem',
-}
+/** Used below chip group fields — same visual treatment as FormField hint */
+export const hintStyle: CSSProperties = {
+  margin: '0.35rem 0 0',
+  fontSize: '

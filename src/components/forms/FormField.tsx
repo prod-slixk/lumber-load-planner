@@ -19,7 +19,7 @@ export function FormField({ id, label, error, hint, children }: FormFieldProps) 
         htmlFor={id}
         style={{
           display: 'block',
-          fontWeight: 600,
+          fontWeight: 700,
           marginBottom: '0.35rem',
           fontSize: '0.875rem',
           color: '#1A2533',

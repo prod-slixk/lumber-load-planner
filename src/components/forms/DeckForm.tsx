@@ -1,13 +1,14 @@
 import { useMemo } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { DeckDimensions } from '../../types'
 import { calculateDeck } from '../../lib/calculations'
 import { useLLPStore } from '../../store'
-import { FormField } from './FormField'
 import { UnitInput } from './UnitInput'
-import { selectStyle, previewBoxStyle, gridTwoStyle } from './shared'
+import { ChipGroup } from './ChipGroup'
+import { ToggleSwitch } from './ToggleSwitch'
+import { previewBoxStyle, gridTwoStyle, chipLabelStyle, hintStyle } from './shared'
 import { SubmitButton } from './SubmitButton'
 
 const schema = z.object({
@@ -32,15 +33,21 @@ interface Props {
   onSubmit: (dims: DeckDimensions) => void
 }
 
+const JOIST_CHIPS = [
+  { value: 12, label: '12" OC', sub: 'heavy loads' },
+  { value: 16, label: '16" OC', sub: 'standard' },
+  { value: 24, label: '24" OC', sub: 'lightweight' },
+]
+
+const DECKING_CHIPS = [
+  { value: 'perpendicular', label: 'Perpendicular' },
+  { value: 'diagonal', label: 'Diagonal 45°', sub: '+15% material' },
+]
+
 export default function DeckForm({ onSubmit }: Props) {
   const unitMode = useLLPStore((s) => s.unitMode)
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    control,
-  } = useForm<FormValues>({
+  const { handleSubmit, watch, control } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { joistSpacingIn: 16, doublePerimeterBeam: false, decking: 'perpendicular' },
   })
@@ -71,59 +78,81 @@ export default function DeckForm({ onSubmit }: Props) {
 
   return (
     <form onSubmit={handleSubmit(handleValid)} noValidate>
+      {/* Footprint */}
       <div style={gridTwoStyle}>
-        <UnitInput
-          name="lengthFt"
+        <UnitInput name="lengthFt" control={control} label="Length" unitMode={unitMode} minFt={4} maxFt={100} />
+        <UnitInput name="widthFt"  control={control} label="Width"  unitMode={unitMode} minFt={4} maxFt={100} />
+      </div>
+
+      {/* Joist spacing */}
+      <div style={{ marginBottom: '1.25rem' }}>
+        <p id="joistSpacingIn-label" style={chipLabelStyle}>Joist spacing</p>
+        <Controller
+          name="joistSpacingIn"
           control={control}
-          label="Length"
-          unitMode={unitMode}
-          minFt={4}
-          maxFt={100}
+          render={({ field }) => (
+            <ChipGroup
+              aria-labelledby="joistSpacingIn-label"
+              options={JOIST_CHIPS}
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
         />
-        <UnitInput
-          name="widthFt"
+        <p style={hintStyle}>16" on-center is standard. 12" for heavy loads, 24" for lightweight builds.</p>
+      </div>
+
+      {/* Decking direction */}
+      <div style={{ marginBottom: '1.25rem' }}>
+        <p id="decking-label" style={chipLabelStyle}>Decking direction</p>
+        <Controller
+          name="decking"
           control={control}
-          label="Width"
-          unitMode={unitMode}
-          minFt={4}
-          maxFt={100}
+          render={({ field }) => (
+            <ChipGroup
+              aria-labelledby="decking-label"
+              options={DECKING_CHIPS}
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
         />
       </div>
 
-      <FormField
-        id="joistSpacingIn"
-        label="Joist spacing"
-        hint='16" on-center is standard for most decks. 12" for heavy loads, 24" for lightweight builds.'
-      >
-        <select id="joistSpacingIn" style={selectStyle} {...register('joistSpacingIn')}>
-          <option value={12}>12&quot; on-center</option>
-          <option value={16}>16&quot; on-center (standard)</option>
-          <option value={24}>24&quot; on-center</option>
-        </select>
-      </FormField>
+      {/* Double perimeter beam toggle */}
+      <Controller
+        name="doublePerimeterBeam"
+        control={control}
+        render={({ field }) => (
+          <ToggleSwitch
+            id="doublePerimeterBeam"
+            label="Double perimeter beam"
+            hint="Recommended for spans over 16 ft — pairs two beams for extra rigidity."
+            checked={field.value}
+            onChange={field.onChange}
+          />
+        )}
+      />
 
-      <FormField id="decking" label="Decking direction">
-        <select id="decking" style={selectStyle} {...register('decking')}>
-          <option value="perpendicular">Perpendicular to house</option>
-          <option value="diagonal">Diagonal (45°) — adds ~15% material</option>
-        </select>
-      </FormField>
-
-      <FormField id="doublePerimeterBeam" label=" ">
-        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', cursor: 'pointer' }}>
-          <input type="checkbox" id="doublePerimeterBeam" {...register('doublePerimeterBeam')} />
-          Double perimeter beam
-        </label>
-      </FormField>
-
+      {/* Live estimate */}
       {preview && (
         <div style={previewBoxStyle}>
-          <p style={{ margin: '0 0 0.3rem', fontSize: '0.75rem', color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Live estimate</p>
-          <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>
-            {preview.shoppingList.reduce((s, e) => s + e.quantity, 0)} boards &nbsp;·&nbsp; {preview.totalBoardFeet.toFixed(0)} board feet
+          <p style={{ margin: '0 0 0.5rem', fontSize: '0.72rem', fontWeight: 700, color: 'var(--llp-blue)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--llp-blue)', display: 'inline-block', flexShrink: 0 }} />
+            Live estimate
           </p>
-          <p style={{ margin: '0.2rem 0 0', fontSize: '0.875rem', color: '#555' }}>
-            ~${preview.estimatedCostMin}–${preview.estimatedCostMax} estimated
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--llp-text)', lineHeight: 1 }}>
+              {preview.shoppingList.reduce((s, e) => s + e.quantity, 0)}
+            </span>
+            <span style={{ fontSize: '0.9rem', color: 'var(--llp-text-muted)', fontWeight: 500 }}>boards</span>
+            <span style={{ fontSize: '0.9rem', color: 'var(--llp-border)', margin: '0 0.1rem' }}>·</span>
+            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--llp-text)' }}>
+              {preview.totalBoardFeet.toFixed(0)} board feet
+            </span>
+          </div>
+          <p style={{ margin: '0.3rem 0 0', fontSize: '0.85rem', color: 'var(--llp-text-muted)' }}>
+            Est. cost: <span style={{ fontWeight: 700, color: 'var(--llp-text)' }}>${preview.estimatedCostMin}–${preview.estimatedCostMax}</span>
           </p>
         </div>
       )}
